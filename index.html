@@ -94,9 +94,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .gf-clear svg{width:14px;height:14px}
 
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
-.kpi-card{background:#fff;border-radius:12px;padding:12px 14px 12px 60px;box-shadow:var(--shadow-card);position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s;min-height:78px;display:flex;flex-direction:column;justify-content:center}
+.kpi-card{background:#fff;border-radius:12px;padding:12px 14px 12px 60px;box-shadow:var(--shadow-card);position:relative;transition:transform .25s,box-shadow .25s;min-height:78px;display:flex;flex-direction:column;justify-content:center}
 .kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
-.kpi-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;background:var(--ico-c)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;background:var(--ico-c);border-top-left-radius:12px;border-bottom-left-radius:12px}
 .kpi-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--ico-bg);color:var(--ico-c)}
 .kpi-ico svg{width:20px;height:20px}
 .kpi-label{font-size:.7rem;color:var(--ts);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
@@ -306,11 +306,14 @@ table.records tbody tr:hover{background:#F8FBFF}
 /* HELP / TOOLTIP */
 .help-ico{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:rgba(27,78,161,.12);color:var(--p);font-size:.65rem;font-weight:700;margin-left:5px;cursor:help;position:relative;flex-shrink:0;vertical-align:middle;transition:all .15s}
 .help-ico:hover{background:var(--p);color:#fff;transform:scale(1.1)}
-.help-ico::before{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1A2B4A;color:#fff;padding:8px 12px;border-radius:7px;font-size:.74rem;font-weight:500;letter-spacing:0;white-space:normal;width:240px;text-align:center;line-height:1.45;box-shadow:0 8px 22px rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:all .2s;pointer-events:none;z-index:30}
-.help-ico::after{content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1A2B4A;opacity:0;visibility:hidden;transition:all .2s;pointer-events:none;z-index:30}
+.help-ico::before{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#1A2B4A;color:#fff;padding:8px 12px;border-radius:7px;font-size:.74rem;font-weight:500;letter-spacing:0;white-space:normal;width:240px;text-align:center;line-height:1.45;box-shadow:0 8px 22px rgba(0,0,0,.4);opacity:0;visibility:hidden;transition:all .2s;pointer-events:none;z-index:9999}
+.help-ico::after{content:'';position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1A2B4A;opacity:0;visibility:hidden;transition:all .2s;pointer-events:none;z-index:9999}
 .help-ico:hover::before,.help-ico:hover::after{opacity:1;visibility:visible}
 .help-ico.right::before{left:auto;right:-8px;transform:none}
 .help-ico.right::after{left:auto;right:8px;transform:none}
+/* Variante "below": tooltip aparece debajo del icono — útil cuando el ícono está cerca del borde superior */
+.help-ico.below::before{bottom:auto;top:calc(100% + 10px)}
+.help-ico.below::after{bottom:auto;top:calc(100% + 4px);border-top-color:transparent;border-bottom-color:#1A2B4A}
 
 @media(max-width:1100px){
   .chart-grid.dash3{grid-template-columns:1fr}
@@ -795,7 +798,7 @@ function renderKPIs(){
 }
 const HELP_CMP = '% Cumplimiento = (Total SI / (Total SI + Total NO)) × 100. Las respuestas N/A no se incluyen en el cálculo.';
 function kpiCard(c,label,val,sub,iconPath){
-  const help = c==='cmp' ? `<span class="help-ico" data-tip="${HELP_CMP}">?</span>` : '';
+  const help = c==='cmp' ? `<span class="help-ico below" data-tip="${HELP_CMP}">?</span>` : '';
   return `<div class="kpi-card k-${c}"><div class="kpi-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${iconPath}</svg></div><div class="kpi-label">${label}${help}</div><div class="kpi-val">${val}</div><div class="kpi-sub">${sub}</div></div>`;
 }
 
@@ -872,7 +875,7 @@ function renderRecordStats(){
     ${rstat('cmp','Cumplimiento',cmp+'%','<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>')}`;
 }
 function rstat(c,label,val,iconPath){
-  const help = c==='cmp' ? `<span class="help-ico" data-tip="${HELP_CMP}">?</span>` : '';
+  const help = c==='cmp' ? `<span class="help-ico below" data-tip="${HELP_CMP}">?</span>` : '';
   return `<div class="rstat r-${c}"><div class="rstat-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${iconPath}</svg></div><div><div class="rstat-val">${val}</div><div class="rstat-lbl">${label}${help}</div></div></div>`;
 }
 function clearRecordFilters(){
