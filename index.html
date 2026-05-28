@@ -303,6 +303,15 @@ table.records tbody tr:hover{background:#F8FBFF}
 .user-form .fld input:focus,.user-form .fld select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(27,78,161,.1)}
 .hint{font-size:.74rem;color:var(--ts);margin-top:4px}
 
+/* HELP / TOOLTIP */
+.help-ico{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:rgba(27,78,161,.12);color:var(--p);font-size:.65rem;font-weight:700;margin-left:5px;cursor:help;position:relative;flex-shrink:0;vertical-align:middle;transition:all .15s}
+.help-ico:hover{background:var(--p);color:#fff;transform:scale(1.1)}
+.help-ico::before{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1A2B4A;color:#fff;padding:8px 12px;border-radius:7px;font-size:.74rem;font-weight:500;letter-spacing:0;white-space:normal;width:240px;text-align:center;line-height:1.45;box-shadow:0 8px 22px rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:all .2s;pointer-events:none;z-index:30}
+.help-ico::after{content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1A2B4A;opacity:0;visibility:hidden;transition:all .2s;pointer-events:none;z-index:30}
+.help-ico:hover::before,.help-ico:hover::after{opacity:1;visibility:visible}
+.help-ico.right::before{left:auto;right:-8px;transform:none}
+.help-ico.right::after{left:auto;right:8px;transform:none}
+
 @media(max-width:1100px){
   .chart-grid.dash3{grid-template-columns:1fr}
   .chart-grid.stats2{grid-template-columns:1fr}
@@ -404,7 +413,7 @@ table.records tbody tr:hover{background:#F8FBFF}
   <div class="kpi-grid" id="kpiGrid"></div>
   <div class="chart-grid dash3">
     <div class="chart-card"><div class="chart-hdr"><div><h3>Distribución global</h3><div class="ch-sub">SI / NO / N/A</div></div></div><div class="chart-wrap"><canvas id="chDist"></canvas></div></div>
-    <div class="chart-card"><div class="chart-hdr"><div><h3>Cumplimiento por servicio</h3><div class="ch-sub">% SI</div></div></div><div class="chart-wrap"><canvas id="chSrv"></canvas></div></div>
+    <div class="chart-card"><div class="chart-hdr"><div><h3>Cumplimiento por servicio <span class="help-ico" data-tip="% Cumplimiento = (Total SI / (Total SI + Total NO)) × 100. Las respuestas N/A no se incluyen en el cálculo.">?</span></h3><div class="ch-sub">% SI por servicio</div></div></div><div class="chart-wrap"><canvas id="chSrv"></canvas></div></div>
     <div class="chart-card"><div class="chart-hdr"><div><h3>Tendencia temporal</h3><div class="ch-sub">Rondas por fecha</div></div></div><div class="chart-wrap"><canvas id="chTime"></canvas></div></div>
   </div>
 </section>
@@ -430,7 +439,7 @@ table.records tbody tr:hover{background:#F8FBFF}
   <div class="table-card">
     <div class="table-meta"><div class="count">Mostrando <b id="cntFrom">0</b>-<b id="cntTo">0</b> de <b id="cntTot">0</b></div></div>
     <div class="table-scroll"><table class="records">
-      <thead><tr><th>Fecha</th><th>Servicio</th><th>Líder</th><th>Totales</th><th>Cumplimiento</th><th>Adjuntos</th><th style="text-align:right">Acciones</th></tr></thead>
+      <thead><tr><th>Fecha</th><th>Servicio</th><th>Líder</th><th>Totales</th><th>Cumplimiento <span class="help-ico" data-tip="% Cumplimiento = (Total SI / (Total SI + Total NO)) × 100. Las respuestas N/A no se incluyen en el cálculo.">?</span></th><th>Adjuntos</th><th style="text-align:right">Acciones</th></tr></thead>
       <tbody id="tBody"></tbody>
     </table></div>
     <div class="pag" id="pag"></div>
@@ -454,8 +463,8 @@ table.records tbody tr:hover{background:#F8FBFF}
     <div class="chart-card"><div class="chart-hdr"><div><h3>Detalle pregunta a pregunta</h3></div></div><div class="chart-wrap h-lg"><canvas id="chQ"></canvas></div></div>
   </div>
   <div class="chart-grid">
-    <div class="chart-card"><div class="chart-hdr"><div><h3>Top servicios</h3></div></div><div class="chart-wrap"><canvas id="chTopSrv"></canvas></div></div>
-    <div class="chart-card"><div class="chart-hdr"><div><h3>Servicios con oportunidad</h3></div></div><div class="chart-wrap"><canvas id="chBotSrv"></canvas></div></div>
+    <div class="chart-card"><div class="chart-hdr"><div><h3>Top servicios <span class="help-ico" data-tip="Servicios con mayor % de cumplimiento. % = (SI / (SI + NO)) × 100, excluyendo N/A.">?</span></h3><div class="ch-sub">Mejor cumplimiento</div></div></div><div class="chart-wrap"><canvas id="chTopSrv"></canvas></div></div>
+    <div class="chart-card"><div class="chart-hdr"><div><h3>Servicios con oportunidad <span class="help-ico" data-tip="Servicios con menor % de cumplimiento. % = (SI / (SI + NO)) × 100, excluyendo N/A.">?</span></h3><div class="ch-sub">Menor cumplimiento</div></div></div><div class="chart-wrap"><canvas id="chBotSrv"></canvas></div></div>
   </div>
 </section>
 
@@ -530,7 +539,7 @@ table.records tbody tr:hover{background:#F8FBFF}
           <div class="fld"><label>Total SI</label><input type="text" id="mSi" readonly></div>
           <div class="fld"><label>Total NO</label><input type="text" id="mNo" readonly></div>
           <div class="fld"><label>Total N/A</label><input type="text" id="mNa" readonly></div>
-          <div class="fld"><label>Cumplimiento</label><input type="text" id="mCmp" readonly></div>
+          <div class="fld"><label>Cumplimiento <span class="help-ico right" data-tip="% Cumplimiento = (Total SI / (Total SI + Total NO)) × 100. Las respuestas N/A no se incluyen en el cálculo.">?</span></label><input type="text" id="mCmp" readonly></div>
         </div>
       </div>
       <div class="m-pane" id="pane-respuestas"></div>
@@ -784,8 +793,10 @@ function renderKPIs(){
     ${kpiCard('cmp','Cumplimiento',cmp+'%',sub,'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>')}
   `;
 }
+const HELP_CMP = '% Cumplimiento = (Total SI / (Total SI + Total NO)) × 100. Las respuestas N/A no se incluyen en el cálculo.';
 function kpiCard(c,label,val,sub,iconPath){
-  return `<div class="kpi-card k-${c}"><div class="kpi-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${iconPath}</svg></div><div class="kpi-label">${label}</div><div class="kpi-val">${val}</div><div class="kpi-sub">${sub}</div></div>`;
+  const help = c==='cmp' ? `<span class="help-ico" data-tip="${HELP_CMP}">?</span>` : '';
+  return `<div class="kpi-card k-${c}"><div class="kpi-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${iconPath}</svg></div><div class="kpi-label">${label}${help}</div><div class="kpi-val">${val}</div><div class="kpi-sub">${sub}</div></div>`;
 }
 
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
@@ -861,7 +872,8 @@ function renderRecordStats(){
     ${rstat('cmp','Cumplimiento',cmp+'%','<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>')}`;
 }
 function rstat(c,label,val,iconPath){
-  return `<div class="rstat r-${c}"><div class="rstat-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${iconPath}</svg></div><div><div class="rstat-val">${val}</div><div class="rstat-lbl">${label}</div></div></div>`;
+  const help = c==='cmp' ? `<span class="help-ico" data-tip="${HELP_CMP}">?</span>` : '';
+  return `<div class="rstat r-${c}"><div class="rstat-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${iconPath}</svg></div><div><div class="rstat-val">${val}</div><div class="rstat-lbl">${label}${help}</div></div></div>`;
 }
 function clearRecordFilters(){
   $('fSearch').value='';$('fServicio').value='';$('fAnio').value='';$('fMes').value='';$('fDesde').value='';$('fHasta').value='';$('fCmp').value='';
@@ -1071,22 +1083,82 @@ function exportCSV(){
 // ════════════════════════════════════════════════════
 function exportXLSX(){
   if(recordFiltered.length===0){toast('Sin datos','err');return;}
-  const header=['Timestamp','Servicio','Fecha','Líder','Total SI','Total NO','Total N/A','Cumplimiento %'];
-  for(let q=1;q<=20;q++)header.push('P'+q+' Resp','P'+q+' Obs');
-  header.push('Archivos');
+
+  // Calcular totales para el resumen
+  let si=0,no=0,na=0;
+  recordFiltered.forEach(r=>{si+=r.total_si;no+=r.total_no;na+=r.total_na;});
+  const cmpGlobal = si+no===0 ? 0 : Math.round((si/(si+no))*100);
+
+  // Construir descripción de filtros aplicados
+  const filtros=[];
+  if(rState.search)filtros.push('Búsqueda: '+rState.search);
+  if(rState.srv)filtros.push('Servicio: '+rState.srv);
+  if(rState.anio)filtros.push('Año: '+rState.anio);
+  if(rState.mes)filtros.push('Mes: '+MESES[parseInt(rState.mes)-1]);
+  if(rState.desde)filtros.push('Desde: '+rState.desde);
+  if(rState.hasta)filtros.push('Hasta: '+rState.hasta);
+  if(rState.cmp)filtros.push('Cumplimiento: '+rState.cmp);
+  const filtrosStr = filtros.length ? filtros.join(' | ') : 'Sin filtros aplicados';
+
+  // Encabezado del reporte (filas 1-9)
+  const reportHeader = [
+    ['RONDAS DE HUMANIZACIÓN'],
+    ['Clínica Santa Bárbara · Consola de Gestión'],
+    [''],
+    ['Generado:', new Date().toLocaleString('es-CO'), '', 'Generado por:', (auth&&auth.fullname)||''],
+    ['Total registros:', recordFiltered.length, '', 'Cumplimiento global:', cmpGlobal+'%'],
+    ['Total SI:', si, 'Total NO:', no, 'Total N/A:', na],
+    ['Filtros aplicados:', filtrosStr],
+    ['Fórmula:', '% Cumplimiento = (Total SI / (Total SI + Total NO)) × 100 — Las respuestas N/A se excluyen'],
+    ['']
+  ];
+
+  // Encabezado de la tabla (fila 10)
+  const tableHeader=['Timestamp','Servicio','Fecha','Líder','Total SI','Total NO','Total N/A','Cumplimiento %'];
+  for(let q=1;q<=20;q++)tableHeader.push('P'+q+' Resp','P'+q+' Obs');
+  tableHeader.push('Archivos');
+
   const rows=recordFiltered.map(r=>{
     const base=[r.created_at,r.servicio,r.fecha,r.lider,r.total_si,r.total_no,r.total_na,pctCumplimiento(r)];
     for(let q=1;q<=20;q++){const rr=r.respuestas[q-1]||{};base.push(rr.respuesta||'',rr.observacion||'');}
     base.push((r.archivos||[]).map(a=>a.nombre+' ('+a.url+')').join('; '));
     return base;
   });
-  const ws=XLSX.utils.aoa_to_sheet([header,...rows]);
+
+  // Combinar: header de reporte + header de tabla + datos
+  const sheetData = [...reportHeader, tableHeader, ...rows];
+  const ws = XLSX.utils.aoa_to_sheet(sheetData);
+
+  // Combinar celdas del encabezado para que se vean como título
+  ws['!merges'] = [
+    {s:{r:0,c:0}, e:{r:0,c:7}},  // Título
+    {s:{r:1,c:0}, e:{r:1,c:7}},  // Subtítulo
+    {s:{r:6,c:1}, e:{r:6,c:7}},  // Filtros
+    {s:{r:7,c:1}, e:{r:7,c:7}}   // Fórmula
+  ];
+
+  // Estilos básicos para celdas del header (negrita)
+  const titleCell = ws['A1']; if(titleCell){titleCell.s={font:{bold:true,sz:16,color:{rgb:'1B4EA1'}},alignment:{horizontal:'center'}};}
+  const subCell = ws['A2']; if(subCell){subCell.s={font:{sz:11,color:{rgb:'5A7090'}},alignment:{horizontal:'center'}};}
+  ['A4','D4','A5','D5','A6','C6','E6','A7','A8'].forEach(c=>{if(ws[c])ws[c].s={font:{bold:true,color:{rgb:'1B4EA1'}}};});
+
   // Anchos de columna
-  ws['!cols']=[{wch:18},{wch:24},{wch:12},{wch:24},{wch:8},{wch:8},{wch:8},{wch:14}];
-  for(let q=1;q<=20;q++){ws['!cols'].push({wch:10},{wch:24});}
-  ws['!cols'].push({wch:40});
+  ws['!cols']=[{wch:22},{wch:30},{wch:14},{wch:26},{wch:10},{wch:10},{wch:10},{wch:16}];
+  for(let q=1;q<=20;q++){ws['!cols'].push({wch:12},{wch:28});}
+  ws['!cols'].push({wch:50});
+
+  // Altura de fila para el título
+  ws['!rows'] = [{hpt:24},{hpt:18}];
+
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Rondas');
+  // Propiedades del archivo
+  wb.Props = {
+    Title:'Rondas de Humanización',
+    Subject:'Reporte de evaluaciones',
+    Author:'Clínica Santa Bárbara',
+    CreatedDate:new Date()
+  };
   XLSX.writeFile(wb,'rondas_'+new Date().toISOString().split('T')[0]+'.xlsx');
   toast('Excel exportado');
 }
@@ -1094,55 +1166,100 @@ function exportXLSX(){
 // ════════════════════════════════════════════════════
 // EXPORT PDF
 // ════════════════════════════════════════════════════
-function exportPDF(){
+// Cache del logo en base64 para no recargarlo cada vez
+let _logoBase64 = null;
+async function getLogoBase64(){
+  if (_logoBase64) return _logoBase64;
+  try {
+    const res = await fetch('logo.png');
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return await new Promise(resolve=>{
+      const r = new FileReader();
+      r.onloadend = ()=>{ _logoBase64 = r.result; resolve(r.result); };
+      r.onerror = ()=> resolve(null);
+      r.readAsDataURL(blob);
+    });
+  } catch(e){ return null; }
+}
+
+async function exportPDF(){
   if(recordFiltered.length===0){toast('Sin datos','err');return;}
-  const {jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  // Encabezado
-  doc.setFillColor(27,78,161);
-  doc.rect(0,0,297,18,'F');
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(14);doc.setFont('helvetica','bold');
-  doc.text('Rondas de Humanización - Clínica Santa Bárbara',14,11);
-  doc.setFontSize(9);doc.setFont('helvetica','normal');
-  doc.text('Generado: '+new Date().toLocaleString('es-CO'),200,11);
+  showLoad(true);
+  try {
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
 
-  // Resumen
-  const total=recordFiltered.length;
-  let si=0,no=0,na=0;
-  recordFiltered.forEach(r=>{si+=r.total_si;no+=r.total_no;na+=r.total_na;});
-  const cmp=si+no===0?0:Math.round((si/(si+no))*100);
-  doc.setTextColor(26,43,74);
-  doc.setFontSize(10);
-  doc.text(`Total registros: ${total}    SI: ${si}    NO: ${no}    N/A: ${na}    Cumplimiento global: ${cmp}%`,14,26);
+    // Cargar logo (puede ser null si no existe el archivo)
+    const logo = await getLogoBase64();
 
-  // Tabla
-  const rows=recordFiltered.map(r=>[
-    fmtFecha(r.fecha), r.servicio, r.lider||'', r.total_si, r.total_no, r.total_na, pctCumplimiento(r)+'%',
-    (r.archivos||[]).length+' arch.'
-  ]);
-  doc.autoTable({
-    startY:30,
-    head:[['Fecha','Servicio','Líder','SI','NO','N/A','Cumpl.','Adjuntos']],
-    body:rows,
-    headStyles:{fillColor:[27,78,161],textColor:255,fontStyle:'bold',fontSize:9},
-    bodyStyles:{fontSize:8.5},
-    alternateRowStyles:{fillColor:[241,245,251]},
-    columnStyles:{
-      0:{cellWidth:22},1:{cellWidth:50},2:{cellWidth:50},
-      3:{cellWidth:14,halign:'center'},4:{cellWidth:14,halign:'center'},5:{cellWidth:14,halign:'center'},
-      6:{cellWidth:20,halign:'center',fontStyle:'bold'},7:{cellWidth:22,halign:'center'}
-    },
-    margin:{left:14,right:14},
-    didDrawPage:(data)=>{
-      const pageCount=doc.internal.getNumberOfPages();
-      doc.setFontSize(8);doc.setTextColor(90,112,144);
-      doc.text(`Página ${data.pageNumber} de ${pageCount}`,14,doc.internal.pageSize.height-8);
+    // Banda azul superior
+    doc.setFillColor(27,78,161);
+    doc.rect(0,0,297,24,'F');
+
+    // Logo (si está disponible) sobre un cuadro blanco
+    if (logo) {
+      try {
+        doc.setFillColor(255,255,255);
+        doc.roundedRect(10,4,38,16,2,2,'F');
+        doc.addImage(logo,'PNG',12,6,34,12);
+      } catch(e){ console.warn('No se pudo dibujar el logo:', e); }
     }
-  });
 
-  doc.save('rondas_'+new Date().toISOString().split('T')[0]+'.pdf');
-  toast('PDF exportado');
+    // Títulos en la banda
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(13);doc.setFont('helvetica','bold');
+    doc.text('Rondas de Humanización',54,11);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');
+    doc.text('Clínica Santa Bárbara · Consola de Gestión',54,17);
+    doc.setFontSize(8);
+    doc.text('Generado: '+new Date().toLocaleString('es-CO'),200,11);
+
+    // Resumen
+    const total=recordFiltered.length;
+    let si=0,no=0,na=0;
+    recordFiltered.forEach(r=>{si+=r.total_si;no+=r.total_no;na+=r.total_na;});
+    const cmp=si+no===0?0:Math.round((si/(si+no))*100);
+    doc.setTextColor(26,43,74);
+    doc.setFontSize(9.5);doc.setFont('helvetica','bold');
+    doc.text(`Total registros: ${total}    SI: ${si}    NO: ${no}    N/A: ${na}    Cumplimiento global: ${cmp}%`,14,32);
+    doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(90,112,144);
+    doc.text('% Cumplimiento = (SI / (SI + NO)) × 100  ·  Las respuestas N/A se excluyen del cálculo',14,37);
+
+    // Tabla
+    const rows=recordFiltered.map(r=>[
+      fmtFecha(r.fecha), r.servicio, r.lider||'', r.total_si, r.total_no, r.total_na, pctCumplimiento(r)+'%',
+      (r.archivos||[]).length+' arch.'
+    ]);
+    doc.autoTable({
+      startY:41,
+      head:[['Fecha','Servicio','Líder','SI','NO','N/A','Cumpl.','Adjuntos']],
+      body:rows,
+      headStyles:{fillColor:[27,78,161],textColor:255,fontStyle:'bold',fontSize:9},
+      bodyStyles:{fontSize:8.5},
+      alternateRowStyles:{fillColor:[241,245,251]},
+      columnStyles:{
+        0:{cellWidth:22},1:{cellWidth:50},2:{cellWidth:50},
+        3:{cellWidth:14,halign:'center'},4:{cellWidth:14,halign:'center'},5:{cellWidth:14,halign:'center'},
+        6:{cellWidth:20,halign:'center',fontStyle:'bold'},7:{cellWidth:22,halign:'center'}
+      },
+      margin:{left:14,right:14},
+      didDrawPage:(data)=>{
+        const pageCount=doc.internal.getNumberOfPages();
+        doc.setFontSize(8);doc.setTextColor(90,112,144);doc.setFont('helvetica','normal');
+        doc.text(`Página ${data.pageNumber} de ${pageCount}`,14,doc.internal.pageSize.height-8);
+        doc.text('Clínica Santa Bárbara · Documento generado automáticamente',200,doc.internal.pageSize.height-8);
+      }
+    });
+
+    doc.save('rondas_'+new Date().toISOString().split('T')[0]+'.pdf');
+    toast('PDF exportado');
+  } catch(e){
+    toast('Error generando PDF: '+e.message,'err');
+    console.error(e);
+  } finally {
+    showLoad(false);
+  }
 }
 
 // ════════════════════════════════════════════════════
