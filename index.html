@@ -673,6 +673,9 @@ async function doLogin(e){
 }
 function logout(){
   sessionStorage.removeItem('auth');auth=null;
+  // Limpiar estado de la app
+  registros=[];filtered=[];recordFiltered=[];usersList=[];currentRecord=null;editBuffer=null;
+  Object.keys(charts).forEach(k=>{if(charts[k]){try{charts[k].destroy();}catch(e){}delete charts[k];}});
   $('app').style.display='none';$('loginScreen').style.display='flex';
   $('loginUser').value='';$('loginPass').value='';$('loginErr').classList.remove('show');
 }
@@ -684,7 +687,9 @@ function showApp(){
   document.querySelector('.user-role').textContent = roleLabel;
   // Mostrar tab Usuarios solo si es admin
   $('tabUsers').style.display = auth.rol==='admin' ? '' : 'none';
-  // Si es consulta, esconder botones de edición/eliminación en la tabla (se hace en renderTable)
+  // Forzar la vista a Dashboard al iniciar sesión (evita que persista una vista de sesión anterior)
+  $$('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view==='dashboard'));
+  $$('.view').forEach(s=>s.classList.toggle('active',s.id==='view-dashboard'));
   loadAll();
 }
 function isAdmin(){ return auth && auth.rol === 'admin'; }
